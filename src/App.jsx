@@ -12,6 +12,8 @@ import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
 import Blog from './pages/Blog';
 import BlogDetails from './pages/BlogDetails' 
+import BlogAdmin from './pages/BlogAdmin';
+import AdminLogin from './pages/AdminLogin';
 
 const App = () => {
   return (
@@ -26,6 +28,8 @@ const App = () => {
           <Route path="/contact" element={<Contact />} /> 
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:id" element={<BlogDetails />} /> 
+          <Route path="/blogadmin" element={<BlogAdmin />} />
+          <Route path="/adminlogin" element={<AdminLogin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
