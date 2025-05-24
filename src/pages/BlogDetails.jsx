@@ -1,14 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import FadeIn from '../components/animations/FadeIn';
-import CosmoParticles from '../components/common/CosmoParticles';
-import { FiCalendar, FiUser, FiTag, FiArrowLeft, FiShare2, FiHeart, FiMessageSquare, FiTwitter, FiLinkedin, FiGithub } from 'react-icons/fi';
+import React, { useEffect, useState } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import FadeIn from "../components/animations/FadeIn";
+import CosmoParticles from "../components/common/CosmoParticles";
+import {
+  FiCalendar,
+  FiUser,
+  FiTag,
+  FiArrowLeft,
+  FiShare2,
+  FiHeart,
+  FiMessageSquare,
+  FiTwitter,
+  FiLinkedin,
+  FiGithub,
+} from "react-icons/fi";
 
 const BlogPostDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  
+
   // State
   const [post, setPost] = useState(null);
   const [relatedPosts, setRelatedPosts] = useState([]);
@@ -21,33 +32,38 @@ const BlogPostDetail = () => {
     const fetchBlogPost = async () => {
       try {
         setIsLoading(true);
-        
+
         // Fetch post details
-        const postResponse = await fetch(`https://thecosmicstackk.onrender.com/blogs/${id}`);
+        const postResponse = await fetch(`http://localhost:3002/blogs/${id}`);
         setPost(postResponse.data);
-        
+
         // Fetch related posts based on category or tags
         const category = postResponse.data.category;
-        const relatedResponse = await fetch(`https://thecosmicstackk.onrender.com/blogs/related`, {
-          params: { 
-            category,
-            excludeId: id,
-            limit: 2 
+        const relatedResponse = await fetch(
+          `http://localhost:3002/blogs/related`,
+          {
+            params: {
+              category,
+              excludeId: id,
+              limit: 2,
+            },
           }
-        });
+        );
         setRelatedPosts(relatedResponse.data);
-        
+
         // Fetch categories for sidebar
-        const categoriesResponse = await fetch('https://thecosmicstackk.onrender.com/categories');
+        const categoriesResponse = await fetch(
+          "http://localhost:3002/categories"
+        );
         setCategories(categoriesResponse.data);
-        
+
         setError(null);
       } catch (err) {
-        console.error('Error fetching blog post:', err);
+        console.error("Error fetching blog post:", err);
         if (err.response && err.response.status === 404) {
-          setError('Blog post not found.');
+          setError("Blog post not found.");
         } else {
-          setError('Failed to load blog post. Please try again later.');
+          setError("Failed to load blog post. Please try again later.");
         }
       } finally {
         setIsLoading(false);
@@ -62,17 +78,19 @@ const BlogPostDetail = () => {
   // Handle share button click
   const handleShare = () => {
     if (navigator.share) {
-      navigator.share({
-        title: post.title,
-        text: post.excerpt,
-        url: window.location.href,
-      })
-      .catch((error) => console.log('Error sharing', error));
+      navigator
+        .share({
+          title: post.title,
+          text: post.excerpt,
+          url: window.location.href,
+        })
+        .catch((error) => console.log("Error sharing", error));
     } else {
       // Fallback for browsers that don't support navigator.share
-      navigator.clipboard.writeText(window.location.href)
-        .then(() => alert('Link copied to clipboard'))
-        .catch((err) => console.error('Could not copy text: ', err));
+      navigator.clipboard
+        .writeText(window.location.href)
+        .then(() => alert("Link copied to clipboard"))
+        .catch((err) => console.error("Could not copy text: ", err));
     }
   };
 
@@ -80,14 +98,14 @@ const BlogPostDetail = () => {
   const handleNewsletterSubmit = async (e) => {
     e.preventDefault();
     const email = e.target.email.value;
-    
+
     try {
-      await fetch('https://thecosmicstackk.onrender.com/newsletter/subscribe', { email });
-      alert('Thank you for subscribing!');
+      await fetch("http://localhost:3002/newsletter/subscribe", { email });
+      alert("Thank you for subscribing!");
       e.target.reset();
     } catch (err) {
-      console.error('Error subscribing to newsletter:', err);
-      alert('Failed to subscribe. Please try again later.');
+      console.error("Error subscribing to newsletter:", err);
+      alert("Failed to subscribe. Please try again later.");
     }
   };
 
@@ -108,8 +126,12 @@ const BlogPostDetail = () => {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
         <div className="cosmic-card p-8 text-center">
-          <h2 className="text-2xl font-bold mb-4">{error || 'Article Not Found'}</h2>
-          <p className="text-slate-400 mb-6">The article you're looking for doesn't exist or has been removed.</p>
+          <h2 className="text-2xl font-bold mb-4">
+            {error || "Article Not Found"}
+          </h2>
+          <p className="text-slate-400 mb-6">
+            The article you're looking for doesn't exist or has been removed.
+          </p>
           <Link to="/blog" className="cosmic-button">
             Back to Blog
           </Link>
@@ -122,21 +144,21 @@ const BlogPostDetail = () => {
     <>
       {/* Background particles effect */}
       <CosmoParticles count={50} opacity={0.2} />
-      
+
       {/* Hero section */}
       <section className="pt-32 pb-16 bg-slate-950 relative overflow-hidden">
         <div className="absolute top-20 right-0 w-96 h-96 bg-blue-500/5 rounded-full filter blur-3xl"></div>
         <div className="absolute bottom-10 left-0 w-96 h-96 bg-purple-500/5 rounded-full filter blur-3xl"></div>
-        
+
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <FadeIn>
-            <Link 
-              to="/blog" 
+            <Link
+              to="/blog"
               className="inline-flex items-center text-blue-400 hover:text-blue-300 transition-colors mb-8"
             >
               <FiArrowLeft className="mr-2" /> Back to all articles
             </Link>
-            
+
             {/* Post metadata */}
             <div className="flex flex-wrap items-center text-sm text-slate-400 mb-6 gap-4 md:gap-8">
               <div className="flex items-center">
@@ -153,31 +175,40 @@ const BlogPostDetail = () => {
                 </span>
               </div>
             </div>
-            
+
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
               {post.title}
             </h1>
-            
+
             <p className="text-slate-400 text-lg md:text-xl max-w-3xl mb-8">
               {post.excerpt}
             </p>
-            
+
             {/* Featured image */}
             <div className="relative rounded-lg overflow-hidden mb-12 cosmic-border">
               {post.imageUrl ? (
-                <img 
-                  src={post.imageUrl} 
-                  alt={post.title} 
+                <img
+                  src={post.imageUrl}
+                  alt={post.title}
                   className="w-full aspect-video object-cover"
                 />
               ) : (
                 <div className="aspect-video bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
                   {/* Placeholder for when no image is available */}
-                  <svg className="w-full h-full text-slate-700" fill="currentColor" viewBox="0 0 24 24">
-                    <rect width="24" height="24" fill="currentColor" opacity="0.1" />
+                  <svg
+                    className="w-full h-full text-slate-700"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <rect
+                      width="24"
+                      height="24"
+                      fill="currentColor"
+                      opacity="0.1"
+                    />
                     <path d="M4 4h16v16H4z" opacity="0.1" />
                   </svg>
-                  
+
                   {/* Post title overlay for image placeholder */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <h2 className="text-3xl font-bold text-white text-center max-w-2xl px-6">
@@ -190,7 +221,7 @@ const BlogPostDetail = () => {
           </FadeIn>
         </div>
       </section>
-      
+
       {/* Article content */}
       <section className="py-12 bg-slate-900 relative overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -215,10 +246,10 @@ const BlogPostDetail = () => {
                       className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-pink-400 transition-colors"
                       onClick={async () => {
                         try {
-                          await fetch(`https://thecosmicstackk.onrender.com/blogs/${id}/like`);
-                          alert('Thanks for the love!');
+                          await fetch(`http://localhost:3002/blogs/${id}/like`);
+                          alert("Thanks for the love!");
                         } catch (err) {
-                          console.error('Error liking post:', err);
+                          console.error("Error liking post:", err);
                         }
                       }}
                     >
@@ -229,9 +260,10 @@ const BlogPostDetail = () => {
                       whileTap={{ scale: 0.95 }}
                       className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-green-400 transition-colors"
                       onClick={() => {
-                        const commentSection = document.getElementById('comments');
+                        const commentSection =
+                          document.getElementById("comments");
                         if (commentSection) {
-                          commentSection.scrollIntoView({ behavior: 'smooth' });
+                          commentSection.scrollIntoView({ behavior: "smooth" });
                         }
                       }}
                     >
@@ -239,13 +271,13 @@ const BlogPostDetail = () => {
                     </motion.button>
                   </div>
                 </div>
-                
+
                 {/* Post content */}
-                <div 
+                <div
                   className="prose prose-invert prose-blue max-w-none"
                   dangerouslySetInnerHTML={{ __html: post.content }}
                 ></div>
-                
+
                 {/* Tags */}
                 {post.tags && post.tags.length > 0 && (
                   <div className="mt-12 pt-8 border-t border-slate-800">
@@ -253,7 +285,7 @@ const BlogPostDetail = () => {
                       <FiTag className="mr-2" /> Tags
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {post.tags.map(tag => (
+                      {post.tags.map((tag) => (
                         <Link
                           key={tag}
                           to={`/blog?tag=${tag}`}
@@ -265,14 +297,14 @@ const BlogPostDetail = () => {
                     </div>
                   </div>
                 )}
-                
+
                 {/* Author bio */}
                 <div className="mt-12 pt-8 border-t border-slate-800">
                   <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
                     {post.authorImageUrl ? (
-                      <img 
-                        src={post.authorImageUrl} 
-                        alt={post.author} 
+                      <img
+                        src={post.authorImageUrl}
+                        alt={post.author}
                         className="w-20 h-20 rounded-full object-cover border-2 border-blue-500/20 flex-shrink-0"
                       />
                     ) : (
@@ -281,23 +313,41 @@ const BlogPostDetail = () => {
                       </div>
                     )}
                     <div>
-                      <h3 className="text-xl font-bold mb-2 text-center sm:text-left">{post.author}</h3>
+                      <h3 className="text-xl font-bold mb-2 text-center sm:text-left">
+                        {post.author}
+                      </h3>
                       <p className="text-slate-400 mb-4 text-center sm:text-left">
-                        {post.authorBio || `Senior Developer at TheCosmicStack with expertise in ${post.category}.`}
+                        {post.authorBio ||
+                          `Senior Developer at TheCosmicStack with expertise in ${post.category}.`}
                       </p>
                       <div className="flex justify-center sm:justify-start space-x-4">
                         {post.authorSocial && post.authorSocial.twitter && (
-                          <a href={post.authorSocial.twitter} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-400 transition-colors">
+                          <a
+                            href={post.authorSocial.twitter}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-slate-400 hover:text-blue-400 transition-colors"
+                          >
                             <FiTwitter />
                           </a>
                         )}
                         {post.authorSocial && post.authorSocial.linkedin && (
-                          <a href={post.authorSocial.linkedin} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-400 transition-colors">
+                          <a
+                            href={post.authorSocial.linkedin}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-slate-400 hover:text-blue-400 transition-colors"
+                          >
                             <FiLinkedin />
                           </a>
                         )}
                         {post.authorSocial && post.authorSocial.github && (
-                          <a href={post.authorSocial.github} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-400 transition-colors">
+                          <a
+                            href={post.authorSocial.github}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-slate-400 hover:text-blue-400 transition-colors"
+                          >
                             <FiGithub />
                           </a>
                         )}
@@ -307,7 +357,7 @@ const BlogPostDetail = () => {
                 </div>
               </div>
             </div>
-            
+
             {/* Sidebar */}
             <div className="lg:col-span-4">
               {/* Related posts */}
@@ -315,21 +365,23 @@ const BlogPostDetail = () => {
                 <h3 className="text-xl font-bold mb-6">Related Articles</h3>
                 {relatedPosts.length > 0 ? (
                   <div className="space-y-6">
-                    {relatedPosts.map(relatedPost => (
+                    {relatedPosts.map((relatedPost) => (
                       <div key={relatedPost.id} className="flex gap-4">
                         <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-slate-800">
                           {relatedPost.imageUrl ? (
-                            <img 
-                              src={relatedPost.imageUrl} 
+                            <img
+                              src={relatedPost.imageUrl}
                               alt={relatedPost.title}
-                              className="w-full h-full object-cover" 
+                              className="w-full h-full object-cover"
                             />
                           ) : (
                             <div className="w-full h-full bg-gradient-to-br from-blue-500/20 to-purple-500/20"></div>
                           )}
                         </div>
                         <div>
-                          <span className="text-xs text-slate-400">{relatedPost.date}</span>
+                          <span className="text-xs text-slate-400">
+                            {relatedPost.date}
+                          </span>
                           <h4 className="font-bold hover:text-blue-400 transition-colors">
                             <Link to={`/blog/${relatedPost.id}`}>
                               {relatedPost.title}
@@ -342,21 +394,21 @@ const BlogPostDetail = () => {
                 ) : (
                   <p className="text-slate-400">No related articles found.</p>
                 )}
-                <Link 
+                <Link
                   to="/blog"
                   className="inline-flex items-center text-blue-400 mt-6 hover:text-blue-300 transition-colors"
                 >
                   View all articles <FiArrowLeft className="ml-2 rotate-180" />
                 </Link>
               </div>
-              
+
               {/* Categories */}
               <div className="cosmic-card mb-8">
                 <h3 className="text-xl font-bold mb-6">Categories</h3>
                 <ul className="space-y-3">
-                  {categories.map(category => (
+                  {categories.map((category) => (
                     <li key={category.name}>
-                      <Link 
+                      <Link
                         to={`/blog?category=${category.name}`}
                         className="flex items-center justify-between text-slate-400 hover:text-blue-400 transition-colors"
                       >
@@ -369,12 +421,13 @@ const BlogPostDetail = () => {
                   ))}
                 </ul>
               </div>
-              
+
               {/* Newsletter signup */}
               <div className="cosmic-card">
                 <h3 className="text-xl font-bold mb-4">Stay Updated</h3>
                 <p className="text-slate-400 mb-6">
-                  Subscribe to our newsletter to get the latest articles and resources.
+                  Subscribe to our newsletter to get the latest articles and
+                  resources.
                 </p>
                 <form onSubmit={handleNewsletterSubmit}>
                   <div className="space-y-4">
@@ -403,15 +456,20 @@ const BlogPostDetail = () => {
           </div>
         </div>
       </section>
-      
+
       {/* Next/Prev article navigation */}
       <section className="py-16 bg-slate-950 relative overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <FadeIn direction="right">
               {post.prevPost ? (
-                <Link to={`/blog/${post.prevPost.id}`} className="cosmic-card h-full flex flex-col">
-                  <span className="text-sm text-slate-400 mb-2">Previous Article</span>
+                <Link
+                  to={`/blog/${post.prevPost.id}`}
+                  className="cosmic-card h-full flex flex-col"
+                >
+                  <span className="text-sm text-slate-400 mb-2">
+                    Previous Article
+                  </span>
                   <h3 className="text-xl font-bold mb-4 hover:text-blue-400 transition-colors">
                     {post.prevPost.title}
                   </h3>
@@ -421,18 +479,25 @@ const BlogPostDetail = () => {
                 </Link>
               ) : (
                 <div className="cosmic-card h-full flex flex-col opacity-50">
-                  <span className="text-sm text-slate-400 mb-2">Previous Article</span>
+                  <span className="text-sm text-slate-400 mb-2">
+                    Previous Article
+                  </span>
                   <h3 className="text-xl font-bold mb-4">
                     No previous article
                   </h3>
                 </div>
               )}
             </FadeIn>
-            
+
             <FadeIn direction="left">
               {post.nextPost ? (
-                <Link to={`/blog/${post.nextPost.id}`} className="cosmic-card h-full flex flex-col">
-                  <span className="text-sm text-slate-400 mb-2">Next Article</span>
+                <Link
+                  to={`/blog/${post.nextPost.id}`}
+                  className="cosmic-card h-full flex flex-col"
+                >
+                  <span className="text-sm text-slate-400 mb-2">
+                    Next Article
+                  </span>
                   <h3 className="text-xl font-bold mb-4 hover:text-blue-400 transition-colors">
                     {post.nextPost.title}
                   </h3>
@@ -442,10 +507,10 @@ const BlogPostDetail = () => {
                 </Link>
               ) : (
                 <div className="cosmic-card h-full flex flex-col opacity-50">
-                  <span className="text-sm text-slate-400 mb-2">Next Article</span>
-                  <h3 className="text-xl font-bold mb-4">
-                    No next article
-                  </h3>
+                  <span className="text-sm text-slate-400 mb-2">
+                    Next Article
+                  </span>
+                  <h3 className="text-xl font-bold mb-4">No next article</h3>
                 </div>
               )}
             </FadeIn>
