@@ -10,6 +10,8 @@ import Services from './pages/Services';
 import Portfolio from './pages/Portfolio';
 import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
+import Blog from './pages/Blog';
+import BlogDetails from './pages/BlogDetails' 
 
 const App = () => {
   return (
@@ -21,7 +23,9 @@ const App = () => {
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
           <Route path="/portfolio" element={<Portfolio />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route path="/contact" element={<Contact />} /> 
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:id" element={<BlogDetails />} /> 
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

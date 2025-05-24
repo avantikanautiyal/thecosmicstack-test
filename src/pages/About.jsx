@@ -14,6 +14,12 @@ const About = () => {
   const milestones = [
     {
       id: 1,
+      year: '2024',
+      title: 'Stellar Spark',
+      description: 'The cosmic idea was born during a late-night coding session. Our founders sketched the blueprint for TheCosmicStack on digital napkins, fueled by coffee and dreams of revolutionizing digital experiences.'
+    },
+    {
+      id: 2,
       year: '2025',
       title: 'Cosmic Beginnings',
       description: 'TheCosmicStack was founded by a group of young developers with a vision to create cutting-edge digital solutions.'
@@ -154,7 +160,51 @@ const About = () => {
             </p>
           </FadeIn>
           
-          <div className="relative max-w-4xl mx-auto">
+          {/* Mobile-only timeline view */}
+          <div className="md:hidden relative max-w-md mx-auto">
+            {/* Connecting vertical line */}
+            <div className="absolute left-16 ml-px top-4 bottom-4 w-0.5 bg-gradient-to-b from-blue-500/50 via-purple-500/50 to-indigo-500/50"></div>
+            
+            {/* Milestones - Mobile timeline layout */}
+            {milestones.map((milestone, index) => (
+              <FadeIn 
+                key={milestone.id}
+                className="mb-16 last:mb-0 relative"
+                delay={index * 0.1}
+              >
+                <div className="flex items-start">
+                  {/* Year circle with icon */}
+                  <div className="flex-shrink-0 relative mr-8">
+                    <motion.div 
+                      className="w-12 h-12 rounded-full bg-slate-800 border border-blue-500/30 flex items-center justify-center text-white font-bold relative z-10"
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      whileInView={{ scale: 1, opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1, duration: 0.4 }}
+                    >
+                      {milestone.year}
+                    </motion.div>
+                    <div className="absolute w-16 h-16 -left-2 -top-2 bg-blue-500/10 rounded-full animate-pulse-slow"></div>
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="flex-1">
+                    <motion.div 
+                      className="bg-slate-900/80 p-4 rounded-lg border border-blue-500/20 backdrop-blur-sm"
+                      whileHover={{ y: -3 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <h3 className="text-xl font-bold mb-2">{milestone.title}</h3>
+                      <p className="text-slate-400 text-sm">{milestone.description}</p>
+                    </motion.div>
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+
+          {/* Desktop timeline view - keep original */}
+          <div className="relative max-w-4xl mx-auto hidden md:block">
             {/* Vertical timeline line */}
             <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-blue-500/30 via-purple-500/30 to-indigo-500/30"></div>
             

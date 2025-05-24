@@ -2,8 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  FiGithub,
-  FiTwitter,
   FiLinkedin,
   FiInstagram,
   FiMail,
@@ -53,25 +51,13 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               <a
-                href="https://github.com/"
-                className="text-slate-400 hover:text-blue-400 transition-colors"
-              >
-                <FiGithub size={20} />
-              </a>
-              <a
-                href="https://x.com/"
-                className="text-slate-400 hover:text-blue-400 transition-colors"
-              >
-                <FiTwitter size={20} />
-              </a>
-              <a
-                href="https://in.linkedin.com/"
+                href="https://www.linkedin.com/company/the-cosmic-stack/"
                 className="text-slate-400 hover:text-blue-400 transition-colors"
               >
                 <FiLinkedin size={20} />
               </a>
               <a
-                href="https://www.instagram.com/"
+                href="https://www.instagram.com/thecosmicstack"
                 className="text-slate-400 hover:text-blue-400 transition-colors"
               >
                 <FiInstagram size={20} />
@@ -90,7 +76,7 @@ const Footer = () => {
               Quick Links
             </h3>
             <ul className="space-y-3">
-              {["Home", "About", "Services", "Portfolio", "Contact"].map(
+              {["Home", "About", "Blog", "Services", "Portfolio", "Contact"].map(
                 (item) => (
                   <li key={item}>
                     <Link
