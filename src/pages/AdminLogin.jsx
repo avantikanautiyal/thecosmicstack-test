@@ -1,41 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FiUser, 
-  FiLock, 
-  FiEye, 
-  FiEyeOff, 
-  FiShield, 
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FiUser,
+  FiLock,
+  FiEye,
+  FiEyeOff,
+  FiShield,
   FiAlertCircle,
   FiLoader,
   FiArrowRight,
   FiRefreshCw,
-  FiCheck
-} from 'react-icons/fi';
+  FiCheck,
+} from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 const AdminLogin = () => {
   // State management
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    rememberMe: false
+    email: "",
+    password: "",
+    rememberMe: false,
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loginAttempts, setLoginAttempts] = useState(0);
   const [isLocked, setIsLocked] = useState(false);
   const [lockoutTimer, setLockoutTimer] = useState(0);
   const [captchaRequired, setCaptchaRequired] = useState(false);
-  const [captchaAnswer, setCaptchaAnswer] = useState('');
-  const [captchaQuestion, setCaptchaQuestion] = useState({ num1: 0, num2: 0, answer: 0 });
+  const [captchaAnswer, setCaptchaAnswer] = useState("");
+  const [captchaQuestion, setCaptchaQuestion] = useState({
+    num1: 0,
+    num2: 0,
+    answer: 0,
+  });
+  const navigate = useNavigate();
 
   // Generate captcha
   const generateCaptcha = () => {
     const num1 = Math.floor(Math.random() * 10) + 1;
     const num2 = Math.floor(Math.random() * 10) + 1;
     setCaptchaQuestion({ num1, num2, answer: num1 + num2 });
-    setCaptchaAnswer('');
+    setCaptchaAnswer("");
   };
 
   // Initialize captcha on mount
@@ -48,11 +54,11 @@ const AdminLogin = () => {
     let interval;
     if (isLocked && lockoutTimer > 0) {
       interval = setInterval(() => {
-        setLockoutTimer(prev => {
+        setLockoutTimer((prev) => {
           if (prev <= 1) {
             setIsLocked(false);
             setLoginAttempts(0);
-            setError('');
+            setError("");
             return 0;
           }
           return prev - 1;
@@ -64,29 +70,29 @@ const AdminLogin = () => {
 
   // Handle input changes
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
-    if (error) setError('');
+    if (error) setError("");
   };
 
   // Validate form
   const validateForm = () => {
     if (!formData.email) {
-      setError('Email is required');
+      setError("Email is required");
       return false;
     }
     if (!formData.password) {
-      setError('Password is required');
+      setError("Password is required");
       return false;
     }
     if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      setError('Please enter a valid email address');
+      setError("Please enter a valid email address");
       return false;
     }
     if (captchaRequired && parseInt(captchaAnswer) !== captchaQuestion.answer) {
-      setError('Incorrect captcha answer');
+      setError("Incorrect captcha answer");
       return false;
     }
     return true;
@@ -102,44 +108,59 @@ const AdminLogin = () => {
     if (!validateForm()) return;
 
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Simulate authentication logic
-      const validCredentials = {
-        email: 'admin@thecosmicstack.com',
-        password: 'CosmicAdmin2024!'
-      };
+      const response = await fetch("http://localhost:3002/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
 
-      if (formData.email === validCredentials.email && formData.password === validCredentials.password) {
-        // Success
+      const data = await response.json();
+
+      if (response.ok) {
+        // Login successful
         if (formData.rememberMe) {
-          localStorage.setItem('adminRememberMe', 'true');
+          localStorage.setItem("adminRememberMe", "true");
         }
-        setError('');
-        alert('Login successful! Redirecting to dashboard...');
+
+        localStorage.setItem("authToken", data.token); // Store auth token
+        setError("");
+        navigate("BlogAdmin"); // Redirect to admin blog
       } else {
-        // Failed login
+        // Login failed
         const newAttempts = loginAttempts + 1;
         setLoginAttempts(newAttempts);
-        
+
         if (newAttempts >= 3) {
           setIsLocked(true);
           setLockoutTimer(300);
-          setError('Too many failed attempts. Account locked for 5 minutes.');
+          setError("Too many failed attempts. Account locked for 5 minutes.");
         } else if (newAttempts >= 2) {
           setCaptchaRequired(true);
           generateCaptcha();
-          setError(`Invalid credentials. ${3 - newAttempts} attempts remaining. Captcha required.`);
+          setError(
+            `${data.message || "Invalid credentials"}. ${
+              3 - newAttempts
+            } attempts remaining. Captcha required.`
+          );
         } else {
-          setError(`Invalid credentials. ${3 - newAttempts} attempts remaining.`);
+          setError(
+            `${data.message || "Invalid credentials"}. ${
+              3 - newAttempts
+            } attempts remaining.`
+          );
         }
       }
     } catch (err) {
-      setError('Login failed. Please try again later.');
+      console.error("Login error:", err);
+      setError("Login failed. Please try again later.");
     } finally {
       setIsLoading(false);
     }
@@ -147,19 +168,19 @@ const AdminLogin = () => {
 
   // Handle forgot password
   const handleForgotPassword = () => {
-    alert('Password reset link sent to your email (demo)');
+    alert("Password reset link sent to your email (demo)");
   };
 
   // Format timer
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   // Handle Enter key press
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !isLoading && !isLocked) {
+    if (e.key === "Enter" && !isLoading && !isLocked) {
       handleLogin();
     }
   };
@@ -188,7 +209,7 @@ const AdminLogin = () => {
           />
         ))}
       </div>
-      
+
       {/* Background gradient effects */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/8 rounded-full filter blur-3xl"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/8 rounded-full filter blur-3xl"></div>
@@ -204,7 +225,6 @@ const AdminLogin = () => {
         {/* Login card */}
         <div className="cosmic-card">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            
             {/* Left side - Branding (Desktop only) */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
@@ -217,13 +237,14 @@ const AdminLogin = () => {
                 <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-blue-500/20">
                   <FiShield className="text-white text-2xl" />
                 </div>
-                
+
                 <div>
                   <h1 className="text-4xl font-bold mb-4">
                     <span className="cosmic-text">Cosmic</span> Admin
                   </h1>
                   <p className="text-slate-400 text-lg leading-relaxed">
-                    Secure content management system with enterprise-grade security and real-time monitoring capabilities.
+                    Secure content management system with enterprise-grade
+                    security and real-time monitoring capabilities.
                   </p>
                 </div>
               </div>
@@ -231,10 +252,16 @@ const AdminLogin = () => {
               {/* Features */}
               <div className="space-y-4">
                 {[
-                  { text: 'Multi-layer security authentication', color: 'bg-blue-400' },
-                  { text: 'Real-time threat monitoring', color: 'bg-purple-400' },
-                  { text: 'End-to-end encryption', color: 'bg-indigo-400' },
-                  { text: 'Advanced access controls', color: 'bg-cyan-400' }
+                  {
+                    text: "Multi-layer security authentication",
+                    color: "bg-blue-400",
+                  },
+                  {
+                    text: "Real-time threat monitoring",
+                    color: "bg-purple-400",
+                  },
+                  { text: "End-to-end encryption", color: "bg-indigo-400" },
+                  { text: "Advanced access controls", color: "bg-cyan-400" },
                 ].map((feature, index) => (
                   <motion.div
                     key={index}
@@ -243,8 +270,12 @@ const AdminLogin = () => {
                     transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
                     className="flex items-center space-x-3"
                   >
-                    <div className={`w-2 h-2 ${feature.color} rounded-full`}></div>
-                    <span className="text-slate-300 text-sm">{feature.text}</span>
+                    <div
+                      className={`w-2 h-2 ${feature.color} rounded-full`}
+                    ></div>
+                    <span className="text-slate-300 text-sm">
+                      {feature.text}
+                    </span>
                   </motion.div>
                 ))}
               </div>
@@ -261,7 +292,9 @@ const AdminLogin = () => {
                   transition={{ duration: 2, repeat: Infinity }}
                   className="w-2 h-2 bg-green-400 rounded-full"
                 />
-                <span className="text-xs text-slate-400">Secure SSL Connection</span>
+                <span className="text-xs text-slate-400">
+                  Secure SSL Connection
+                </span>
               </motion.div>
             </motion.div>
 
@@ -277,7 +310,9 @@ const AdminLogin = () => {
                 <h2 className="text-2xl lg:text-3xl font-bold mb-2">
                   Welcome <span className="cosmic-text">back</span>
                 </h2>
-                <p className="text-slate-400">Please sign in to your admin account</p>
+                <p className="text-slate-400">
+                  Please sign in to your admin account
+                </p>
               </div>
 
               {/* Security status - Mobile */}
@@ -288,7 +323,9 @@ const AdminLogin = () => {
                     transition={{ duration: 2, repeat: Infinity }}
                     className="w-2 h-2 bg-green-400 rounded-full"
                   />
-                  <span className="text-xs text-slate-400">Secure Connection</span>
+                  <span className="text-xs text-slate-400">
+                    Secure Connection
+                  </span>
                 </div>
               </div>
 
@@ -301,9 +338,9 @@ const AdminLogin = () => {
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
                     transition={{ duration: 0.3 }}
                     className={`p-4 rounded-lg border flex items-center space-x-3 ${
-                      isLocked 
-                        ? 'bg-red-500/10 border-red-500/30 text-red-400'
-                        : 'bg-orange-500/10 border-orange-500/30 text-orange-400'
+                      isLocked
+                        ? "bg-red-500/10 border-red-500/30 text-red-400"
+                        : "bg-orange-500/10 border-orange-500/30 text-orange-400"
                     }`}
                   >
                     <FiAlertCircle className="flex-shrink-0" />
@@ -322,16 +359,20 @@ const AdminLogin = () => {
                     className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-yellow-400 text-sm">Attempts: {loginAttempts}/3</span>
+                      <span className="text-yellow-400 text-sm">
+                        Attempts: {loginAttempts}/3
+                      </span>
                       <div className="flex space-x-1">
-                        {[1, 2, 3].map(i => (
+                        {[1, 2, 3].map((i) => (
                           <motion.div
                             key={i}
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
                             transition={{ duration: 0.2, delay: i * 0.1 }}
                             className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-                              i <= loginAttempts ? 'bg-yellow-400' : 'bg-slate-700'
+                              i <= loginAttempts
+                                ? "bg-yellow-400"
+                                : "bg-slate-700"
                             }`}
                           />
                         ))}
@@ -350,14 +391,16 @@ const AdminLogin = () => {
                     exit={{ opacity: 0, scale: 0.9 }}
                     className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-center"
                   >
-                    <motion.div 
+                    <motion.div
                       className="text-red-400 font-mono text-xl mb-2"
                       animate={{ opacity: [1, 0.7, 1] }}
                       transition={{ duration: 1, repeat: Infinity }}
                     >
                       {formatTime(lockoutTimer)}
                     </motion.div>
-                    <div className="text-red-300 text-sm">Account temporarily locked</div>
+                    <div className="text-red-300 text-sm">
+                      Account temporarily locked
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -376,13 +419,15 @@ const AdminLogin = () => {
                     <input
                       type="email"
                       value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("email", e.target.value)
+                      }
                       onKeyDown={handleKeyDown}
                       disabled={isLocked}
                       className={`w-full bg-slate-800/30 border rounded-xl pl-12 pr-4 py-4 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 ${
-                        isLocked 
-                          ? 'border-slate-700 opacity-50 cursor-not-allowed'
-                          : 'border-slate-700 focus:ring-blue-500/50 hover:border-slate-600'
+                        isLocked
+                          ? "border-slate-700 opacity-50 cursor-not-allowed"
+                          : "border-slate-700 focus:ring-blue-500/50 hover:border-slate-600"
                       }`}
                       placeholder="Enter your email address"
                       autoComplete="email"
@@ -400,15 +445,17 @@ const AdminLogin = () => {
                       <FiLock className="text-slate-400 group-focus-within:text-blue-400 transition-colors duration-300" />
                     </div>
                     <input
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPassword ? "text" : "password"}
                       value={formData.password}
-                      onChange={(e) => handleInputChange('password', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("password", e.target.value)
+                      }
                       onKeyDown={handleKeyDown}
                       disabled={isLocked}
                       className={`w-full bg-slate-800/30 border rounded-xl pl-12 pr-14 py-4 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 ${
-                        isLocked 
-                          ? 'border-slate-700 opacity-50 cursor-not-allowed'
-                          : 'border-slate-700 focus:ring-blue-500/50 hover:border-slate-600'
+                        isLocked
+                          ? "border-slate-700 opacity-50 cursor-not-allowed"
+                          : "border-slate-700 focus:ring-blue-500/50 hover:border-slate-600"
                       }`}
                       placeholder="Enter your password"
                       autoComplete="current-password"
@@ -431,7 +478,7 @@ const AdminLogin = () => {
                   {captchaRequired && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
+                      animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
                       transition={{ duration: 0.4 }}
                       className="space-y-2"
@@ -473,7 +520,9 @@ const AdminLogin = () => {
                     <input
                       type="checkbox"
                       checked={formData.rememberMe}
-                      onChange={(e) => handleInputChange('rememberMe', e.target.checked)}
+                      onChange={(e) =>
+                        handleInputChange("rememberMe", e.target.checked)
+                      }
                       disabled={isLocked}
                       className="w-4 h-4 text-blue-500 bg-slate-800 border-slate-600 rounded focus:ring-blue-500/50 focus:ring-2 transition-all duration-300"
                     />
@@ -481,7 +530,7 @@ const AdminLogin = () => {
                       Remember me
                     </span>
                   </label>
-                  
+
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     type="button"
@@ -502,15 +551,19 @@ const AdminLogin = () => {
                   whileTap={!isLoading && !isLocked ? { scale: 0.98 } : {}}
                   className={`w-full py-4 px-6 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center space-x-3 ${
                     isLoading || isLocked
-                      ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
-                      : 'cosmic-button hover:shadow-lg hover:shadow-blue-500/25'
+                      ? "bg-slate-700 text-slate-400 cursor-not-allowed"
+                      : "cosmic-button hover:shadow-lg hover:shadow-blue-500/25"
                   }`}
                 >
                   {isLoading ? (
                     <>
                       <motion.div
                         animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        transition={{
+                          duration: 1,
+                          repeat: Infinity,
+                          ease: "linear",
+                        }}
                       >
                         <FiLoader />
                       </motion.div>
@@ -534,14 +587,6 @@ const AdminLogin = () => {
                   )}
                 </motion.button>
               </div>
-
-              {/* Demo credentials */}
-              <div className="text-center p-4 bg-slate-800/20 border border-slate-700/30 rounded-xl">
-                <p className="text-xs text-slate-500 mb-1">Demo Credentials</p>
-                <p className="text-xs text-slate-400">
-                  <span className="text-blue-400">admin@thecosmicstack.com</span> / <span className="text-purple-400">CosmicAdmin2024!</span>
-                </p>
-              </div>
             </motion.div>
           </div>
         </div>
@@ -553,7 +598,9 @@ const AdminLogin = () => {
           transition={{ duration: 0.8, delay: 1 }}
           className="text-center mt-8"
         >
-          <p className="text-xs text-slate-600">© 2025 TheCosmicStack. All rights reserved.</p>
+          <p className="text-xs text-slate-600">
+            © 2025 TheCosmicStack. All rights reserved.
+          </p>
         </motion.div>
       </motion.div>
 
@@ -565,48 +612,65 @@ const AdminLogin = () => {
           backdrop-filter: blur(20px);
           border-radius: 24px;
           padding: 48px;
-          box-shadow: 
-            0 25px 50px -12px rgba(0, 0, 0, 0.5), 
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
             0 0 100px rgba(59, 130, 246, 0.03),
             inset 0 1px 0 rgba(255, 255, 255, 0.05);
           transition: all 0.3s ease;
         }
-        
+
         .cosmic-button {
-          background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(147, 51, 234, 0.2) 100%);
+          background: linear-gradient(
+            135deg,
+            rgba(59, 130, 246, 0.2) 0%,
+            rgba(147, 51, 234, 0.2) 100%
+          );
           border: 1px solid rgba(59, 130, 246, 0.4);
           color: #60a5fa;
           transition: all 0.3s ease;
           position: relative;
           overflow: hidden;
         }
-        
+
         .cosmic-button:hover:not(:disabled) {
-          background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(147, 51, 234, 0.3) 100%);
+          background: linear-gradient(
+            135deg,
+            rgba(59, 130, 246, 0.3) 0%,
+            rgba(147, 51, 234, 0.3) 100%
+          );
           transform: translateY(-1px);
           box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
         }
-        
+
         .cosmic-text {
-          background: linear-gradient(135deg, #60a5fa 0%, #a855f7 50%, #3b82f6 100%);
+          background: linear-gradient(
+            135deg,
+            #60a5fa 0%,
+            #a855f7 50%,
+            #3b82f6 100%
+          );
           -webkit-background-clip: text;
           background-clip: text;
           -webkit-text-fill-color: transparent;
           background-size: 200% 200%;
           animation: gradient-shift 3s ease infinite;
         }
-        
+
         @keyframes gradient-shift {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
+          0%,
+          100% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
         }
-        
+
         @media (max-width: 1024px) {
           .cosmic-card {
             padding: 32px;
           }
         }
-        
+
         @media (max-width: 640px) {
           .cosmic-card {
             padding: 24px;
