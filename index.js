@@ -9,6 +9,7 @@ const projectRoutes = require("./routes/projectRoutes");
 const teamRoutes = require("./routes/teamRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 const blogRoutes = require("./routes/blogRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 require("dotenv").config();
 
@@ -32,6 +33,7 @@ app.use("/projects", projectRoutes);
 app.use("/teams", teamRoutes);
 app.use("/contact", contactRoutes);
 app.use("/blogs", blogRoutes);
+app.use("/users", userRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
