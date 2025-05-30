@@ -27,18 +27,23 @@ router.get("/:id", async (req, res) => {
 
 // 📥 Admin: Create blog
 router.post("/", protect, adminOnly, async (req, res) => {
-  const { title, content, coverImage } = req.body;
+  const { title, content, imageUrl, author, publishDate, tags, category } =
+    req.body;
 
   try {
     const newBlog = await Blog.create({
       title,
       content,
-      coverImage,
-      author: req.user._id,
+      imageUrl,
+      author,
+      publishDate,
+      tags,
+      category,
     });
 
     res.status(201).json(newBlog);
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: "Failed to create blog" });
   }
 });
