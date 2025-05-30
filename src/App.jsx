@@ -17,9 +17,7 @@ import AdminLogin from "./pages/AdminLogin";
 
 const App = () => {
   const location = useLocation();
-  const isAdminRoute =
-    location.pathname.startsWith("/adminLogin") ||
-    location.pathname.startsWith("/blogadmin");
+  const isAdminRoute = location.pathname.includes("admin");
 
   const isAuthenticated = !!localStorage.getItem("authToken"); // Check token presence
 

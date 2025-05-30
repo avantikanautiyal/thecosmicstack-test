@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="uuid-a2cc7c0b-f35b-4eea-ab69-272675080474" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 225.5 234.98">
+  <defs>
+    <style>
+      .uuid-5ccd975a-1e57-4cfa-b422-eb147ff8c439 {
+        fill: #e0dad9;
+      }
+
+      .uuid-2b308631-a5e7-471e-8eb7-a6bd541614c2 {
+        fill: url(#uuid-28fa6016-f3f7-46bb-acc2-1212f8a65fa3);
+      }
+
+      .uuid-f63d976e-09bd-4de9-afb9-9984077723d0 {
+        fill: #fff;
+      }
+
+      .uuid-c96306f7-3872-4591-b82e-408f834e5470 {
+        fill: url(#uuid-5c046263-2b98-45d8-b362-0bc910367790);
+      }
+
+      .uuid-20756588-7f58-4dc0-a0b6-fefcdda36a69 {
+        fill: #c8c3c3;
+      }
+
+      .uuid-1e69c241-6a50-426f-a225-5ce284ed6088 {
+        fill: #aaa6a6;
+      }
+
+      .uuid-7acb7fae-c89d-494d-b482-ddab5526e2de {
+        fill: #9f9d9e;
+      }
+    </style>
+    <linearGradient id="uuid-5c046263-2b98-45d8-b362-0bc910367790" x1="-60.99" y1="67.21" x2="187.27" y2="-16.56" gradientUnits="userSpaceOnUse">
+      <stop offset=".47" stop-color="#a89fce"/>
+      <stop offset=".66" stop-color="#9897c4"/>
+      <stop offset="1" stop-color="#7486ae"/>
+    </linearGradient>
+    <linearGradient id="uuid-28fa6016-f3f7-46bb-acc2-1212f8a65fa3" x1="5.92" y1="-110.47" x2="62.94" y2="245.56" gradientUnits="userSpaceOnUse">
+      <stop offset=".44" stop-color="#867ab9"/>
+      <stop offset=".57" stop-color="#7674b1"/>
+      <stop offset=".82" stop-color="#4c679f"/>
+      <stop offset=".96" stop-color="#336094"/>
+    </linearGradient>
+  </defs>
+  <polyline class="uuid-1e69c241-6a50-426f-a225-5ce284ed6088" points="102.14 234.98 95.11 229.64 94.77 173.78 101.43 177.88"/>
+  <g>
+    <polygon class="uuid-c96306f7-3872-4591-b82e-408f834e5470" points="0 32.54 120.09 0 148.49 10.62 26.16 46.49 0 32.54"/>
+    <polygon class="uuid-2b308631-a5e7-471e-8eb7-a6bd541614c2" points="14.51 165.91 86.11 222.56 86.31 168.7 32.98 132 26.16 46.49 .02 32.6 .02 32.63 14.51 165.91"/>
+  </g>
+  <polyline class="uuid-1e69c241-6a50-426f-a225-5ce284ed6088" points="118.34 69.99 177.96 69.48 181.39 100.14 180.66 133.67 188.22 138.17 193.06 137.9 205.55 93.74 181.43 39.81 179.61 38.25 179.26 22.03 99.59 48.46"/>
+  <polygon class="uuid-f63d976e-09bd-4de9-afb9-9984077723d0" points="157.88 14.14 36.46 51.21 98.35 84.12 225.5 38.7 203.02 30.45 120.08 58.72 100.14 48.45 179.26 22.03 157.88 14.14"/>
+  <polygon class="uuid-20756588-7f58-4dc0-a0b6-fefcdda36a69" points="36.39 51.24 39.18 98.15 99.22 135.16 98.29 84.3 98.28 84.15 36.39 51.24"/>
+  <polygon class="uuid-5ccd975a-1e57-4cfa-b422-eb147ff8c439" points="225.43 38.72 216.86 172.64 102.14 234.98 101.39 177.86 188.22 138.02 189.15 96.69 99.22 135.16 98.28 84.15 225.43 38.72"/>
+  <polygon class="uuid-7acb7fae-c89d-494d-b482-ddab5526e2de" points="94.78 173.8 94.78 173.8 101.37 177.86 101.38 177.87 188.21 137.87 180.65 133.53 94.78 173.8"/>
+</svg>

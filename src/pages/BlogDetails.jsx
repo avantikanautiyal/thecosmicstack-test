@@ -35,27 +35,24 @@ const BlogPostDetail = () => {
 
         // Fetch post details
         const postResponse = await fetch(`http://localhost:3002/blogs/${id}`);
-        setPost(postResponse.data);
+        const postData = await postResponse.json();
+        setPost(postData);
 
-        // Fetch related posts based on category or tags
-        const category = postResponse.data.category;
+        const category = postData.category;
+
+        // Fetch related posts
         const relatedResponse = await fetch(
-          `http://localhost:3002/blogs/related`,
-          {
-            params: {
-              category,
-              excludeId: id,
-              limit: 2,
-            },
-          }
+          `http://localhost:3002/blogs/related?category=${category}&excludeId=${id}&limit=2`
         );
-        setRelatedPosts(relatedResponse.data);
+        const relatedData = await relatedResponse.json();
+        setRelatedPosts(relatedData);
 
-        // Fetch categories for sidebar
+        // Fetch categories
         const categoriesResponse = await fetch(
           "http://localhost:3002/categories"
         );
-        setCategories(categoriesResponse.data);
+        const categoriesData = await categoriesResponse.json();
+        setCategories(categoriesData);
 
         setError(null);
       } catch (err) {
