@@ -11,7 +11,7 @@ import Portfolio from "./pages/Portfolio";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import Blog from "./pages/Blog";
-import BlogDetails from "./pages/BlogDetails";
+import BlogPostDetail from "./pages/BlogDetails";
 import BlogAdmin from "./pages/BlogAdmin";
 import AdminLogin from "./pages/AdminLogin";
 
@@ -33,7 +33,7 @@ const App = () => {
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:id" element={<BlogDetails />} />
+          <Route path="/blog/:id" element={<BlogPostDetail />} />
 
           {/* Admin Routes */}
           <Route path="/adminLogin" element={<AdminLogin />} />

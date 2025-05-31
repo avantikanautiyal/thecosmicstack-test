@@ -292,7 +292,7 @@ const BlogCard = ({ post }) => {
 
       {/* Read more link */}
       <Link
-        to={`/blog/${post.id}`}
+        to={`/blog/${post._id}`}
         className="flex items-center text-blue-400 font-medium mt-auto"
       >
         Read more <FiArrowRight className="ml-2" />
