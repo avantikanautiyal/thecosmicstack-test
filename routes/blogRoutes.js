@@ -15,12 +15,28 @@ router.get("/", async (req, res) => {
 });
 
 // 📄 Public: Get single blog by ID
-router.get("/:id", async (req, res) => {
+router.get("/:_id", async (req, res) => {
   try {
-    const blog = await Blog.findById(req.params.id);
-    if (!blog) return res.status(404).json({ message: "Blog not found" });
+    const id = req.params._id;
+    console.log("Received blog ID:", id);
+
+    if (!id || id === "undefined" || id === "null") {
+      return res.status(400).json({ message: "Invalid blog ID" });
+    }
+
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ message: "Invalid blog ID format" });
+    }
+
+    const blog = await Blog.findOne({ _id: id });
+
+    if (!blog) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
+
     res.json(blog);
   } catch (err) {
+    console.error("Error fetching blog:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
