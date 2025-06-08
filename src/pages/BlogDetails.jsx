@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
+import gsap from "gsap";
 import FadeIn from "../components/animations/FadeIn";
 import CosmoParticles from "../components/common/CosmoParticles";
 import {
@@ -16,55 +17,39 @@ import {
 const BlogPostDetail = () => {
   const { id } = useParams();
 
-  // State
   const [post, setPost] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch blog post data
   useEffect(() => {
     const fetchBlogPost = async () => {
       try {
         setIsLoading(true);
-
-        // Debug: Log the ID
-        console.log("Blog ID from useParams:", id);
-
         if (!id || id === "undefined") {
           setError("Invalid blog ID");
           return;
         }
 
-        // Fetch post details
         const postResponse = await fetch(`http://localhost:3002/blogs/${id}`);
-
         if (!postResponse.ok) {
           throw new Error(`HTTP error! status: ${postResponse.status}`);
         }
 
         const postData = await postResponse.json();
-        console.log("Fetched blog data:", postData);
         setPost(postData);
-
         setError(null);
       } catch (err) {
         console.error("Error fetching blog post:", err);
-        if (err.response && err.response.status === 404) {
-          setError("Blog post not found.");
-        } else {
-          setError("Failed to load blog post. Please try again later.");
-        }
+        setError("Failed to load blog post. Please try again later.");
       } finally {
         setIsLoading(false);
       }
     };
 
-    // Scroll to top when navigating to a new post
     window.scrollTo(0, 0);
     fetchBlogPost();
   }, [id]);
 
-  // Handle share button click
   const handleShare = () => {
     if (navigator.share) {
       navigator
@@ -75,7 +60,6 @@ const BlogPostDetail = () => {
         })
         .catch((error) => console.log("Error sharing", error));
     } else {
-      // Fallback for browsers that don't support navigator.share
       navigator.clipboard
         .writeText(window.location.href)
         .then(() => alert("Link copied to clipboard"))
@@ -83,7 +67,6 @@ const BlogPostDetail = () => {
     }
   };
 
-  // Loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
@@ -95,7 +78,6 @@ const BlogPostDetail = () => {
     );
   }
 
-  // Error state
   if (error || !post) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
@@ -116,10 +98,8 @@ const BlogPostDetail = () => {
 
   return (
     <>
-      {/* Background particles effect */}
       <CosmoParticles count={50} opacity={0.2} />
 
-      {/* Hero section */}
       <section className="pt-32 pb-16 bg-slate-950 relative overflow-hidden">
         <div className="absolute top-20 right-0 w-96 h-96 bg-blue-500/5 rounded-full filter blur-3xl"></div>
         <div className="absolute bottom-10 left-0 w-96 h-96 bg-purple-500/5 rounded-full filter blur-3xl"></div>
@@ -133,7 +113,6 @@ const BlogPostDetail = () => {
               <FiArrowLeft className="mr-2" /> Back to all articles
             </Link>
 
-            {/* Post metadata */}
             <div className="flex flex-wrap items-center text-sm text-slate-400 mb-6 gap-4 md:gap-8">
               <div className="flex items-center">
                 <FiCalendar className="mr-1" />
@@ -160,7 +139,6 @@ const BlogPostDetail = () => {
               {post.title}
             </h1>
 
-            {/* Generate excerpt from content if not available */}
             {post.excerpt ? (
               <p className="text-slate-400 text-lg md:text-xl max-w-3xl mb-8">
                 {post.excerpt}
@@ -171,32 +149,15 @@ const BlogPostDetail = () => {
               </p>
             )}
 
-            {/* Featured image */}
-            <div className="relative rounded-lg overflow-hidden mb-12 cosmic-border">
+            <div className="relative rounded-lg overflow-hidden mb-12 cosmic-border max-w-4xl mx-auto">
               {post.imageUrl && post.imageUrl.trim() !== "" ? (
                 <img
                   src={post.imageUrl}
                   alt={post.title}
-                  className="w-full aspect-video object-cover"
+                  className="w-full h-[300px] object-cover object-center"
                 />
               ) : (
-                <div className="aspect-video bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center relative">
-                  {/* Placeholder for when no image is available */}
-                  <svg
-                    className="w-full h-full text-slate-700"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <rect
-                      width="24"
-                      height="24"
-                      fill="currentColor"
-                      opacity="0.1"
-                    />
-                    <path d="M4 4h16v16H4z" opacity="0.1" />
-                  </svg>
-
-                  {/* Post title overlay for image placeholder */}
+                <div className="h-[300px] bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center relative">
                   <div className="absolute inset-0 flex items-center justify-center">
                     <h2 className="text-3xl font-bold text-white text-center max-w-2xl px-6">
                       {post.title}
@@ -209,63 +170,61 @@ const BlogPostDetail = () => {
         </div>
       </section>
 
-      {/* Article content */}
-      <section className="py-12 bg-slate-900 relative overflow-hidden">
+      <section className="py-20 bg-slate-900 relative overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-4xl mx-auto">
-            <div className="cosmic-card overflow-hidden">
-              {/* Social sharing */}
-              <div className="flex justify-end mb-8">
-                <div className="flex space-x-3">
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-blue-400 transition-colors"
-                    onClick={handleShare}
-                  >
-                    <FiShare2 />
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-pink-400 transition-colors"
-                    onClick={async () => {
-                      try {
-                        await fetch(`http://localhost:3002/blogs/${id}/like`);
-                        alert("Thanks for the love!");
-                      } catch (err) {
-                        console.error("Error liking post:", err);
-                      }
-                    }}
-                  >
-                    <FiHeart />
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-green-400 transition-colors"
-                    onClick={() => {
-                      const commentSection =
-                        document.getElementById("comments");
-                      if (commentSection) {
-                        commentSection.scrollIntoView({ behavior: "smooth" });
-                      }
-                    }}
-                  >
-                    <FiMessageSquare />
-                  </motion.button>
-                </div>
+          <div className="max-w-5xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="rounded-2xl bg-slate-800 p-10 shadow-xl border border-slate-700"
+            >
+              <div className="flex justify-end mb-8 space-x-3">
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-10 h-10 rounded-full bg-slate-700 text-slate-300 hover:text-blue-400 flex items-center justify-center"
+                  onClick={handleShare}
+                >
+                  <FiShare2 />
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-10 h-10 rounded-full bg-slate-700 text-slate-300 hover:text-pink-400 flex items-center justify-center"
+                  onClick={async () => {
+                    try {
+                      await fetch(`http://localhost:3002/blogs/${id}/like`);
+                      alert("Thanks for the love!");
+                    } catch (err) {
+                      console.error("Error liking post:", err);
+                    }
+                  }}
+                >
+                  <FiHeart />
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-10 h-10 rounded-full bg-slate-700 text-slate-300 hover:text-green-400 flex items-center justify-center"
+                  onClick={() => {
+                    const commentSection = document.getElementById("comments");
+                    if (commentSection) {
+                      commentSection.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }}
+                >
+                  <FiMessageSquare />
+                </motion.button>
               </div>
 
-              {/* Post content */}
               <div
-                className="prose prose-invert prose-blue max-w-none"
+                className="prose prose-invert prose-blue max-w-none text-slate-100"
                 dangerouslySetInnerHTML={{ __html: post.content }}
               ></div>
 
-              {/* Tags */}
               {post.tags && post.tags.length > 0 && (
-                <div className="mt-12 pt-8 border-t border-slate-800">
+                <div className="mt-12 pt-8 border-t border-slate-700">
                   <h3 className="text-lg font-bold mb-4 flex items-center">
                     <FiTag className="mr-2" /> Tags
                   </h3>
@@ -274,7 +233,7 @@ const BlogPostDetail = () => {
                       <Link
                         key={index}
                         to={`/blog?tag=${tag}`}
-                        className="px-3 py-1 text-sm bg-slate-800 text-slate-300 hover:text-blue-400 rounded-full transition-colors"
+                        className="px-3 py-1 text-sm bg-slate-700 text-slate-300 hover:text-blue-400 rounded-full transition-colors"
                       >
                         #{tag}
                       </Link>
@@ -283,8 +242,7 @@ const BlogPostDetail = () => {
                 </div>
               )}
 
-              {/* Author bio */}
-              <div className="mt-12 pt-8 border-t border-slate-800">
+              <div className="mt-12 pt-8 border-t border-slate-700">
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
                   {post.authorImageUrl ? (
                     <img
@@ -293,7 +251,7 @@ const BlogPostDetail = () => {
                       className="w-20 h-20 rounded-full object-cover border-2 border-blue-500/20 flex-shrink-0"
                     />
                   ) : (
-                    <div className="w-20 h-20 rounded-full bg-slate-800 flex items-center justify-center text-blue-400 flex-shrink-0">
+                    <div className="w-20 h-20 rounded-full bg-slate-700 flex items-center justify-center text-blue-400 flex-shrink-0">
                       <FiUser size={24} />
                     </div>
                   )}
@@ -308,7 +266,7 @@ const BlogPostDetail = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
