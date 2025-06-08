@@ -1,4 +1,6 @@
-import React, { useEffect } from 'react';
+// src/pages/Home.jsx
+import React, { useEffect, useState } from 'react';
+import VideoLoader from '../components/common/VideoLoader';
 import Hero from '../components/sections/Hero';
 import Services from '../components/sections/Services';
 import Process from '../components/sections/Process';
@@ -9,24 +11,28 @@ import Contact from '../components/sections/Contact';
 import CosmoParticles from '../components/common/CosmoParticles';
 
 const Home = () => {
-  // Scroll to top on component mount
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   return (
     <>
-      {/* Background particles effect */}
-      <CosmoParticles count={70} opacity={0.3} />
-      
-      {/* Main sections */}
-      <Hero />
-      <Services />
-      <Process />
-      <Projects />
-      <About />
-      <Team />
-      <Contact />
+      {isLoading && <VideoLoader onComplete={() => setIsLoading(false)} />}
+
+      {!isLoading && (
+        <div>
+          <CosmoParticles count={70} opacity={0.3} />
+          <Hero />
+          <Services />
+          <Process />
+          <Projects />
+          <About />
+          <Team />
+          <Contact />
+        </div>
+      )}
     </>
   );
 };
