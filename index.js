@@ -10,11 +10,13 @@ const teamRoutes = require("./routes/teamRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 const blogRoutes = require("./routes/blogRoutes");
 const userRoutes = require("./routes/userRoutes");
+const { connectRedis } = require("./utils/redisClient");
 
 require("dotenv").config();
 
 //Connect to the database on starting the server
 connectDB();
+connectRedis();
 
 app.use(
   cors({
