@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
-import cosmic_logo from '/assets/cosmic_logo.svg'; // Adjust path if needed
+import React, { useEffect, useRef, useState } from "react";
+import { gsap } from "gsap";
+import cosmic_logo from "/assets/cosmic_logo.svg";
 
-const CosmicStackLoader = ({ onComplete, duration = 3000 }) => {
+const CosmicStackLoader = ({ duration = 3000 }) => {
   const [visible, setVisible] = useState(true);
   const containerRef = useRef(null);
   const logoRef = useRef(null);
@@ -15,16 +15,17 @@ const CosmicStackLoader = ({ onComplete, duration = 3000 }) => {
   useEffect(() => {
     const tl = gsap.timeline();
 
-    // Fade in loader and animate logo
-    tl.fromTo(containerRef.current, { opacity: 0 }, { opacity: 1, duration: 0.4 })
-      .fromTo(
-        logoRef.current,
-        { y: -30, scale: 0.8, opacity: 0 },
-        { y: 0, scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.7)' },
-        '-=0.1'
-      );
+    tl.fromTo(
+      containerRef.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.4 }
+    ).fromTo(
+      logoRef.current,
+      { y: -30, scale: 0.8, opacity: 0 },
+      { y: 0, scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.7)" },
+      "-=0.1"
+    );
 
-    // Animate each word with advanced effects
     wordRefs.current.forEach((ref, i) => {
       tl.fromTo(
         ref,
@@ -42,25 +43,24 @@ const CosmicStackLoader = ({ onComplete, duration = 3000 }) => {
           skewY: 0,
           rotate: 0,
           duration: 1,
-          ease: 'elastic.out(1, 0.5)',
+          ease: "elastic.out(1, 0.5)",
         },
-        `-=${0.8 - i * 0.2}` // slight overlap
+        `-=${0.8 - i * 0.2}`
       );
     });
 
-    const timer = setTimeout(() => {
+    const timeout = setTimeout(() => {
       gsap.to(containerRef.current, {
         opacity: 0,
         duration: 0.6,
         onComplete: () => {
           setVisible(false);
-          onComplete?.();
         },
       });
     }, duration);
 
-    return () => clearTimeout(timer);
-  }, [duration, onComplete]);
+    return () => clearTimeout(timeout);
+  }, [duration]);
 
   if (!visible) return null;
 
@@ -77,16 +77,10 @@ const CosmicStackLoader = ({ onComplete, duration = 3000 }) => {
           className="w-16 sm:w-20 h-auto animate-float"
         />
         <h1 className="text-3xl sm:text-4xl font-display font-bold flex">
-          <span
-            ref={(el) => setWordRef(el, 0)}
-            className="text-[#7A6FF0]"
-          >
+          <span ref={(el) => setWordRef(el, 0)} className="text-[#7A6FF0]">
             the
           </span>
-          <span
-            ref={(el) => setWordRef(el, 1)}
-            className="text-white"
-          >
+          <span ref={(el) => setWordRef(el, 1)} className="text-white">
             cosmic
           </span>
           <span
