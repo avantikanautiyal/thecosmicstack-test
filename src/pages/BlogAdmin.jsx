@@ -2,26 +2,21 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   FiEdit3,
-  FiSave,
   FiEye,
   FiTrash2,
   FiPlus,
-  FiImage,
   FiCalendar,
   FiTag,
   FiUser,
   FiFileText,
   FiSettings,
-  FiUpload,
   FiX,
   FiCheck,
   FiAlertCircle,
   FiSearch,
-  FiFilter,
   FiBold,
   FiItalic,
   FiLink,
-  FiCode,
   FiList,
 } from "react-icons/fi";
 
@@ -104,6 +99,38 @@ const BlogAdmin = () => {
       ...prev,
       [field]: value,
     }));
+  };
+
+  // ✅ Handle file upload
+  const handleFileUpload = async (file) => {
+    const authToken = localStorage.getItem("authToken");
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/blogs/upload`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Upload failed");
+
+      const data = await res.json();
+      console.log(data);
+
+      setCurrentPost((prev) => ({
+        ...prev,
+        imageUrl: data.path || data.secure_url || data.imageUrl || "", // 👈 fallback if backend gives imageUrl
+      }));
+
+      showNotification("Image uploaded successfully");
+    } catch (err) {
+      console.error("Image upload error:", err);
+      showNotification("Image upload failed", "error");
+    }
   };
 
   // Rich text editor functions
@@ -617,18 +644,12 @@ const BlogAdmin = () => {
                   <h3 className="text-lg font-bold mb-4">Featured Image</h3>
                   <div className="space-y-4">
                     <input
-                      type="url"
-                      value={currentPost.imageUrl}
-                      onChange={(e) =>
-                        handleInputChange("imageUrl", e.target.value)
-                      }
-                      className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                      placeholder="Image URL..."
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e.target.files[0])}
+                      className="w-full text-white"
                     />
-                    <button className="w-full px-4 py-2 border border-slate-700 text-slate-400 rounded-lg hover:bg-slate-800 transition-colors flex items-center justify-center">
-                      <FiUpload className="mr-2" />
-                      Upload Image
-                    </button>
+
                     {currentPost.imageUrl && (
                       <div className="aspect-video bg-slate-800 rounded-lg overflow-hidden">
                         <img

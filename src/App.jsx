@@ -17,6 +17,7 @@ import Blog from "./pages/Blog";
 import BlogPostDetail from "./pages/BlogDetails";
 import BlogAdmin from "./pages/BlogAdmin";
 import AdminLogin from "./pages/AdminLogin";
+import AdminSignup from "./pages/AdminSignup";
 
 const App = () => {
   const location = useLocation();
@@ -52,6 +53,7 @@ const App = () => {
           <Route path="/blog/:id" element={<BlogPostDetail />} />
 
           {/* Admin Routes */}
+          <Route path="/adminSignup" element={<AdminSignup />} />
           <Route path="/adminLogin" element={<AdminLogin />} />
           <Route
             path="/adminLogin/blogadmin"
