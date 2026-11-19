@@ -155,6 +155,8 @@ const BlogPostDetail = () => {
                   src={post.imageUrl}
                   alt={post.title}
                   className="w-full h-[300px] object-cover object-center"
+                  fetchpriority="high"
+                  decoding="async"
                 />
               ) : (
                 <div className="h-[300px] bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center relative">
@@ -249,6 +251,8 @@ const BlogPostDetail = () => {
                       src={post.authorImageUrl}
                       alt={post.author}
                       className="w-20 h-20 rounded-full object-cover border-2 border-blue-500/20 flex-shrink-0"
+                      loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <div className="w-20 h-20 rounded-full bg-slate-700 flex items-center justify-center text-blue-400 flex-shrink-0">
